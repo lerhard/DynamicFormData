@@ -1,57 +1,55 @@
-namespace DynamicFormValidator.Presentation;
+using DynamicFormValidator.Presentation.Models;
+using DynamicFormValidator.Presentation.Models.Enums;
 
-public static class FormDataV1Service
+namespace DynamicFormValidator.Presentation.Services;
+
+public static class FormService
 {
-    public static Dictionary<int,FormDataValidationInfo[]> GetValidationInfo(int formId)
+    public static Dictionary<int,RequestValidationInfo[]> GetValidationInfo(int formId)
     {
-        if (formId == 1)
-        {
-            return Form1();
-        }
-
-        return default;
+        return formId == 1 ? Form1() : default;
     }
 
-    private static Dictionary<int, FormDataValidationInfo[]> Form1()
+    private static Dictionary<int, RequestValidationInfo[]> Form1()
     {
-        var dic = new Dictionary<int, FormDataValidationInfo[]>();
-        dic.Add(1, new FormDataValidationInfo[]
+        var dic = new Dictionary<int, RequestValidationInfo[]>();
+        dic.Add(1, new RequestValidationInfo[]
         {
-            new FormDataValidationInfo
+            new RequestValidationInfo
             {
                 FormId = 1,
                 KeyId = 1,
                 KeyName = "Name",
-                KeyType = (int)FormDataType.STRING,
+                KeyType = (int)DataType.STRING,
                 Validations = new List<ValidationInfo>
                 {
                     new ValidationInfo
                     {
-                        ValidationType = (int)FormDataValidationType.REQUIRED,
+                        ValidationType = (int)ValidationType.REQUIRED,
                         ErrorMessage = "Name is required"
                     }
                 }
             },
         });
 
-        dic.Add(2, new FormDataValidationInfo[]
+        dic.Add(2, new RequestValidationInfo[]
             {
-                new FormDataValidationInfo()
+                new RequestValidationInfo()
                 {
                     FormId = 1,
                     KeyId = 2,
                     KeyName = "Age",
-                    KeyType = (int)FormDataType.INT,
+                    KeyType = (int)DataType.INT,
                     Validations = new List<ValidationInfo>
                     {
                         new ValidationInfo
                         {
-                            ValidationType = (int)FormDataValidationType.REQUIRED,
+                            ValidationType = (int)ValidationType.REQUIRED,
                             ErrorMessage = "Age is required"
                         },
                         new ValidationInfo
                         {
-                            ValidationType = (int)FormDataValidationType.GREATER_THAN_OR_EQUALS,
+                            ValidationType = (int)ValidationType.GREATER_THAN_OR_EQUALS,
                             ValidationValues = new string[] { "18" },
                             ErrorMessage = "Age must be greater than or equals to 18"
                         }

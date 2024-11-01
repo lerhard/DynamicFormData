@@ -1,4 +1,4 @@
-namespace DynamicFormValidator.Presentation;
+namespace DynamicFormValidator.Presentation.Models;
 
 public class ValidationInfo
 {

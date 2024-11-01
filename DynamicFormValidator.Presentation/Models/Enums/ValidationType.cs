@@ -1,6 +1,6 @@
 namespace DynamicFormValidator.Presentation;
 
-public enum FormDataValidationType
+public enum ValidationType
 {
     LESS_THAN,
     EQUALS,

@@ -1,6 +1,6 @@
-namespace DynamicFormValidator.Presentation;
+namespace DynamicFormValidator.Presentation.Models;
 
-public class FormDataValidationInfo
+public class RequestValidationInfo
 {
     public int FormId { get; init; }
     public int KeyId { get; init; }

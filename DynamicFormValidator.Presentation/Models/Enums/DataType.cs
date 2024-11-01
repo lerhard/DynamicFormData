@@ -1,6 +1,6 @@
-namespace DynamicFormValidator.Presentation;
+namespace DynamicFormValidator.Presentation.Models.Enums;
 
-public enum FormDataType
+public enum DataType
 {
     STRING,
     UUID,

@@ -1,17 +1,17 @@
 using System.Text.Json.Serialization;
 
-namespace DynamicFormValidator.Presentation;
+namespace DynamicFormValidator.Presentation.Models.DTOs;
 
-public class FormDataRequestV1Dto
+public class FormRequest
 {
     [JsonPropertyName("form_id")]
     public int FormId { get; init; }
     
     [JsonPropertyName("form_data")]
-    public Dictionary<string,FormDataRequestInfo> FormData { get; init; }
+    public Dictionary<string,FormRequestInfo> FormData { get; init; }
 }
 
-public class FormDataRequestInfo
+public class FormRequestInfo
 {
     [JsonPropertyName("key_id")]
     public int KeyId { get; init; }

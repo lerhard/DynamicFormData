@@ -1,53 +1,56 @@
+using DynamicFormValidator.Presentation.Models.DTOs;
+using DynamicFormValidator.Presentation.Models.Enums;
+using DynamicFormValidator.Presentation.Services;
 using FluentValidation.Results;
 
-namespace DynamicFormValidator.Presentation;
+namespace DynamicFormValidator.Presentation.Models.Validators;
 
-public class FormDataRequestV1Validator
+public class RequestValidatorService
 {
-    public ValidationResult Validate(FormDataRequestV1Dto request)
+    public static ValidationResult Validate(FormRequest formRequest)
     {
-        Dictionary<int, FormDataValidationInfo[]> formValidationInfo =
-            FormDataV1Service.GetValidationInfo(request.FormId);
+        Dictionary<int, RequestValidationInfo[]> formValidationInfo =
+            FormService.GetValidationInfo(formRequest.FormId);
 
         ValidationResult validationResult = new ValidationResult();
 
-        foreach (var key in request.FormData.Keys)
+        foreach (var key in formRequest.FormData.Keys)
         {
-            if (!formValidationInfo.ContainsKey(request.FormData[key].KeyId))
+            if (!formValidationInfo.ContainsKey(formRequest.FormData[key].KeyId))
             {
                 throw new NullReferenceException("Key not found in validation info. FormId: "
-                                                 + request.FormId + " KeyId: " + request.FormData[key].KeyId);
+                                                 + formRequest.FormId + " KeyId: " + formRequest.FormData[key].KeyId);
             }
 
-            var validationInfo = formValidationInfo[request.FormData[key].KeyId];
+            var validationInfo = formValidationInfo[formRequest.FormData[key].KeyId];
 
 
             foreach (var valInfo in validationInfo)
             {
                 foreach (var validation in valInfo.Validations)
                 {
-                    switch ((FormDataValidationType)validation.ValidationType)
+                    switch ((ValidationType)validation.ValidationType)
                     {
-                        case FormDataValidationType.REQUIRED:
-                            if (string.IsNullOrWhiteSpace(request.FormData[key].KeyValue))
+                        case ValidationType.REQUIRED:
+                            if (string.IsNullOrWhiteSpace(formRequest.FormData[key].KeyValue))
                             {
                                 validationResult.Errors.Add(new ValidationFailure(key, validation.ErrorMessage));
                             }
 
                             break;
 
-                        case FormDataValidationType.EQUALS:
+                        case ValidationType.EQUALS:
 
-                            if (string.IsNullOrWhiteSpace(request.FormData[key].KeyValue))
+                            if (string.IsNullOrWhiteSpace(formRequest.FormData[key].KeyValue))
                             {
                                 validationResult.Errors.Add(new ValidationFailure(key, validation.ErrorMessage));
                             }
 
-                            if (valInfo.KeyType == (int)FormDataType.STRING)
+                            if (valInfo.KeyType == (int)DataType.STRING)
                             {
                                 foreach (var validationValue in validation.ValidationValues)
                                 {
-                                    if (!string.Equals(validationValue, request.FormData[key].KeyValue))
+                                    if (!string.Equals(validationValue, formRequest.FormData[key].KeyValue))
                                     {
                                         validationResult.Errors.Add(new ValidationFailure(key,
                                             validation.ErrorMessage));
@@ -55,9 +58,9 @@ public class FormDataRequestV1Validator
                                 }
                             }
 
-                            if (valInfo.KeyType == (int)FormDataType.INT)
+                            if (valInfo.KeyType == (int)DataType.INT)
                             {
-                                int formValue = int.Parse(request.FormData[key].KeyValue);
+                                int formValue = int.Parse(formRequest.FormData[key].KeyValue);
                                 foreach (var validationValue in validation.ValidationValues)
                                 {
                                     if (formValue != int.Parse(validationValue))
@@ -68,9 +71,9 @@ public class FormDataRequestV1Validator
                                 }
                             }
 
-                            if (valInfo.KeyType == (int)FormDataType.FLOAT)
+                            if (valInfo.KeyType == (int)DataType.FLOAT)
                             {
-                                var formValue = float.Parse(request.FormData[key].KeyValue);
+                                var formValue = float.Parse(formRequest.FormData[key].KeyValue);
                                 foreach (var validationValue in validation.ValidationValues)
                                 {
                                     if (formValue != float.Parse(validationValue))
@@ -81,9 +84,9 @@ public class FormDataRequestV1Validator
                                 }
                             }
 
-                            if (valInfo.KeyType == (int)FormDataType.DOUBLE)
+                            if (valInfo.KeyType == (int)DataType.DOUBLE)
                             {
-                                var formValue = double.Parse(request.FormData[key].KeyValue);
+                                var formValue = double.Parse(formRequest.FormData[key].KeyValue);
                                 foreach (var validationValue in validation.ValidationValues)
                                 {
                                     if (formValue != double.Parse(validationValue))
@@ -94,9 +97,9 @@ public class FormDataRequestV1Validator
                                 }
                             }
 
-                            if (valInfo.KeyType == (int)FormDataType.DECIMAL)
+                            if (valInfo.KeyType == (int)DataType.DECIMAL)
                             {
-                                var formValue = decimal.Parse(request.FormData[key].KeyValue);
+                                var formValue = decimal.Parse(formRequest.FormData[key].KeyValue);
                                 foreach (var validationValue in validation.ValidationValues)
                                 {
                                     if (formValue != decimal.Parse(validationValue))
@@ -107,9 +110,9 @@ public class FormDataRequestV1Validator
                                 }
                             }
 
-                            if (valInfo.KeyType == (int)FormDataType.DATE)
+                            if (valInfo.KeyType == (int)DataType.DATE)
                             {
-                                var formValue = DateTime.Parse(request.FormData[key].KeyValue);
+                                var formValue = DateTime.Parse(formRequest.FormData[key].KeyValue);
                                 foreach (var validationValue in validation.ValidationValues)
                                 {
                                     if (formValue.Date != DateTime.Parse(validationValue).Date)
@@ -122,17 +125,17 @@ public class FormDataRequestV1Validator
 
                             break;
 
-                        case FormDataValidationType.GREATER_THAN_OR_EQUALS:
+                        case ValidationType.GREATER_THAN_OR_EQUALS:
 
-                            if (string.IsNullOrWhiteSpace(request.FormData[key].KeyValue))
+                            if (string.IsNullOrWhiteSpace(formRequest.FormData[key].KeyValue))
                             {
                                 validationResult.Errors.Add(new ValidationFailure(key, validation.ErrorMessage));
                             }
 
 
-                            if (valInfo.KeyType == (int)FormDataType.INT)
+                            if (valInfo.KeyType == (int)DataType.INT)
                             {
-                                int formValue = int.Parse(request.FormData[key].KeyValue);
+                                int formValue = int.Parse(formRequest.FormData[key].KeyValue);
                                 foreach (var validationValue in validation.ValidationValues)
                                 {
                                     if ( formValue < int.Parse(validationValue))
@@ -143,9 +146,9 @@ public class FormDataRequestV1Validator
                                 }
                             }
 
-                            if (valInfo.KeyType == (int)FormDataType.FLOAT)
+                            if (valInfo.KeyType == (int)DataType.FLOAT)
                             {
-                                var formValue = float.Parse(request.FormData[key].KeyValue);
+                                var formValue = float.Parse(formRequest.FormData[key].KeyValue);
                                 foreach (var validationValue in validation.ValidationValues)
                                 {
                                     if (formValue < float.Parse(validationValue))
@@ -156,9 +159,9 @@ public class FormDataRequestV1Validator
                                 }
                             }
 
-                            if (valInfo.KeyType == (int)FormDataType.DOUBLE)
+                            if (valInfo.KeyType == (int)DataType.DOUBLE)
                             {
-                                var formValue = double.Parse(request.FormData[key].KeyValue);
+                                var formValue = double.Parse(formRequest.FormData[key].KeyValue);
                                 foreach (var validationValue in validation.ValidationValues)
                                 {
                                     if (formValue < double.Parse(validationValue))
@@ -169,9 +172,9 @@ public class FormDataRequestV1Validator
                                 }
                             }
 
-                            if (valInfo.KeyType == (int)FormDataType.DECIMAL)
+                            if (valInfo.KeyType == (int)DataType.DECIMAL)
                             {
-                                var formValue = decimal.Parse(request.FormData[key].KeyValue);
+                                var formValue = decimal.Parse(formRequest.FormData[key].KeyValue);
                                 foreach (var validationValue in validation.ValidationValues)
                                 {
                                     if (formValue < decimal.Parse(validationValue))
@@ -182,9 +185,9 @@ public class FormDataRequestV1Validator
                                 }
                             }
 
-                            if (valInfo.KeyType == (int)FormDataType.DATE)
+                            if (valInfo.KeyType == (int)DataType.DATE)
                             {
-                                var formValue = DateTime.Parse(request.FormData[key].KeyValue);
+                                var formValue = DateTime.Parse(formRequest.FormData[key].KeyValue);
                                 foreach (var validationValue in validation.ValidationValues)
                                 {
                                     if (formValue.Date < DateTime.Parse(validationValue).Date)

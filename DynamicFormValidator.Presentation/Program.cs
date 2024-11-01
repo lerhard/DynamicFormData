@@ -1,4 +1,6 @@
 using DynamicFormValidator.Presentation;
+using DynamicFormValidator.Presentation.Models.DTOs;
+using DynamicFormValidator.Presentation.Models.Validators;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,24 +22,20 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.MapPost("/validate", ([FromBody]FormDataRequestV1Dto formData) =>
+app.MapPost("/validate", ([FromBody] FormRequest formData) =>
 {
-    var validator = new FormDataRequestV1Validator();
-    var result = validator.Validate(formData);
-    if (!result.IsValid)
+    var validator = new RequestValidatorService();
+    var result = RequestValidatorService.Validate(formData);
+    if (result.IsValid)
     {
-        var errors = new Dictionary<string, string[]>();
-        foreach (var error in result.Errors)
-        {
-            errors.Add(error.PropertyName, new[] {error.ErrorMessage});
-        }
-
-
-        return Results.ValidationProblem(errors);
-
+        return Results.Ok();
     }
 
-    return Results.Ok();
+    var errors = result.Errors
+        .ToDictionary(error => error.PropertyName, error => new[] { error.ErrorMessage });
+
+    return Results.ValidationProblem(errors);
+    
 }).WithName("ValidateFormData").WithOpenApi();
 
 app.Run();

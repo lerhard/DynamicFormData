@@ -1,0 +1,26 @@
+CREATE TYPE data_type AS ENUM(
+   'STRING','UUID','INT','FLOAT','DOUBLE','DECIMAL','DATE','DATETIME','BOOLEAN' 
+);
+
+CREATE TYPE validation_type AS ENUM(
+   'LESS_THAN',
+   'EQUALS',
+   'GREATER_THAN',
+   'LESS_THAN_OR_EQUALS',
+   'GREATER_THAN_OR_EQUALS',
+   'NOT_EQUALS',
+   'REGEX',
+   'REQUIRED'
+);
+
+CREATE TABLE form_validations
+(
+    form_id  INT          NOT NULL AUTO_INCREMENT PRIMARY KEY,
+    validations JSONB     NOT NULL,
+);
+
+CREATE TABLE form_database_info
+(
+    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+
+);
