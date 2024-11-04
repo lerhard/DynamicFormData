@@ -1,6 +1,5 @@
 @DynamicFormValidator.Presentation_HostAddress = http://localhost:5203
 
-GET {{DynamicFormValidator.Presentation_HostAddress}}/validate/
-Accept: application/json
+GET {{DynamicFormValidator.Presentation_HostAddress}}/form/
 
 ###

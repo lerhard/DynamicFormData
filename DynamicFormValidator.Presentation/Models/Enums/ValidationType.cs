@@ -9,5 +9,6 @@ public enum ValidationType
     GREATER_THAN_OR_EQUALS,
     NOT_EQUALS,
     REGEX,
-    REQUIRED
+    REQUIRED,
+    AGE
 }
