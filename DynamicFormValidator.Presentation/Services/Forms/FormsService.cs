@@ -1,7 +1,9 @@
 using System.Data;
+using DynamicFormValidator.Presentation.Models.DTOs;
 using DynamicFormValidator.Presentation.Models.Entities.Forms;
 using DynamicFormValidator.Presentation.Repositories.Forms;
 using DynamicFormValidator.Presentation.Services.Connection;
+using FluentValidation.Results;
 
 namespace DynamicFormValidator.Presentation.Services.Forms;
 
@@ -33,5 +35,22 @@ public  class FormsService: IFormsService
         {
            conn?.Close(); 
         }
+    }
+
+    public async Task<ValidationResult> ValidateForm(FormDto formDto)
+    {
+        var form =  await GetForm(formDto.Id);
+        if (form is null)
+        {
+            throw new DataException("Form not found");
+        }
+
+        return new ValidationResult();
+
+    }
+
+    public Task SaveForm(FormDto form)
+    {
+        throw new NotImplementedException();
     }
 }

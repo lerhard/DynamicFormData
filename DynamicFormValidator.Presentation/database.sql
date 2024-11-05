@@ -16,6 +16,7 @@ CREATE TYPE validation_type AS ENUM(
 CREATE TABLE forms
 (
     id        SERIAL PRIMARY KEY,
+    subform_id INTEGER,
     name VARCHAR(255) NOT NULL,
     description VARCHAR(255) NOT NULL,
     fields JSONB  NOT NULL,
