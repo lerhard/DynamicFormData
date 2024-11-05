@@ -7,6 +7,8 @@ namespace DynamicFormValidator.Presentation.Services.Forms;
 public interface IFormsService
 {
    Task<Form> GetForm(int id);
+   Task SaveForm(FormDto formDto);
    Task<ValidationResult> ValidateForm(FormDto formDto);
-   Task SaveForm(FormDto form);
+   Task<ValidationResult> ValidateEntityId(string entityId);
+   Task DeleteForm(int formId, string entityId);
 }

@@ -4,6 +4,7 @@ using Dapper;
 using DynamicFormValidator.Presentation.Models.DTOs;
 using DynamicFormValidator.Presentation.Models.Entities.Forms;
 using DynamicFormValidator.Presentation.Models.Handlers;
+using DynamicFormValidator.Presentation.Models.Interpreter;
 using DynamicFormValidator.Presentation.Models.Swagger;
 using DynamicFormValidator.Presentation.Models.Validators;
 using DynamicFormValidator.Presentation.Repositories;
@@ -13,6 +14,7 @@ using DynamicFormValidator.Presentation.Services.Forms;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.OpenApi;
 using Swashbuckle.AspNetCore.Filters;
+using ValidationResult = FluentValidation.Results.ValidationResult;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,11 +31,12 @@ builder.Services.AddSwaggerGen(options =>
     options.ExampleFilters();
 });
 builder.Services.AddSwaggerExamplesFromAssemblies(Assembly.GetEntryAssembly());
-Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+DefaultTypeMap.MatchNamesWithUnderscores = true;
 SqlMapper.AddTypeHandler(new JsonbTypeHandler<FormValidation>());
 SqlMapper.AddTypeHandler(new JsonbTypeHandler<FormValidationInfo>());
 SqlMapper.AddTypeHandler(new JsonbTypeHandler<FormDatabaseInfo>());
 SqlMapper.AddTypeHandler(new JsonbTypeHandler<FormField>());
+builder.Services.AddTransient<IFormDataQueryInterpreter, FormDataQueryInterpreter>();
 
 var app = builder.Build();
 
@@ -56,14 +59,26 @@ app.MapGet("/form", async ([FromQuery] int formId, IFormsService formService) =>
 
 app.MapPost("/form", async ([Required,FromBody] FormDto FormDto, IFormsService formService) =>
 {
-    var validationResult = await formService.ValidateForm(FormDto);
+    ValidationResult validationResult = await formService.ValidateForm(FormDto);
     if (!validationResult.IsValid)
     {
-        Dictionary<string, string[]> errors = validationResult.Errors.ToDictionary(error => error.PropertyName, error => error.ErrorMessage.Split('|'));
-        return Results.ValidationProblem(errors);
+        return Results.ValidationProblem(validationResult.ToDictionary());
     }
+    
+    await formService.SaveForm(FormDto);
 
     return Results.NoContent();
 });
+app.MapDelete("/form", async ([Required,FromQuery] int formId, [Required,FromQuery] string entityId,  IFormsService formService) =>
+{
+    ValidationResult validationResult = await formService.ValidateEntityId(entityId);
+    if(!validationResult.IsValid)
+    {
+        return Results.ValidationProblem(validationResult.ToDictionary());
+    }
+    
+    await formService.DeleteForm(formId, entityId);
 
+    return Results.NoContent();
+});
 app.Run();

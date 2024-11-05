@@ -19,4 +19,7 @@ public class FormDatabaseInfo
     
     [JsonProperty("type")]
     public int Type { get; set; }
+    
+    [JsonProperty("is_primary_key")]
+    public bool IsPrimaryKey { get; set; }
 }

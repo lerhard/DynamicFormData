@@ -2,6 +2,7 @@ namespace DynamicFormValidator.Presentation;
 
 public enum ValidationType
 {
+    REQUIRED,
     LESS_THAN,
     EQUALS,
     GREATER_THAN,
@@ -9,6 +10,5 @@ public enum ValidationType
     GREATER_THAN_OR_EQUALS,
     NOT_EQUALS,
     REGEX,
-    REQUIRED,
     AGE
 }

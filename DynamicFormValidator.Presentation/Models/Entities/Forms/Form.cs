@@ -8,6 +8,9 @@ public class Form
    [Column("id")]
    public int Id { get; set; } 
    
+   [Column("parent_id")]
+   public int ParentId { get; set; }
+   
    [Column("name")]
    public string Name { get; set; }
    
@@ -28,4 +31,7 @@ public class Form
    
    [Column("database_info")]
    public List<FormDatabaseInfo> DatabaseInfo { get; set; }
+   
+   [NotMapped]
+   public List<Form> SubForms { get; set; }
 }

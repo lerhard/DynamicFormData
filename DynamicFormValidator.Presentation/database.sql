@@ -3,6 +3,7 @@ CREATE TYPE data_type AS ENUM(
 );
 
 CREATE TYPE validation_type AS ENUM(
+   'REQUIRED',
    'LESS_THAN',
    'EQUALS',
    'GREATER_THAN',
@@ -10,13 +11,13 @@ CREATE TYPE validation_type AS ENUM(
    'GREATER_THAN_OR_EQUALS',
    'NOT_EQUALS',
    'REGEX',
-   'REQUIRED'
+    'AGE'
 );
 
 CREATE TABLE forms
 (
     id        SERIAL PRIMARY KEY,
-    subform_id INTEGER,
+    parent_id INTEGER,
     name VARCHAR(255) NOT NULL,
     description VARCHAR(255) NOT NULL,
     fields JSONB  NOT NULL,
@@ -54,7 +55,7 @@ VALUES ('Person','Person Insertion Form',
             "id": 4,
             "name": "birth_date",
             "label": "Person Birth Date",
-            "type": 11,
+            "type": 6,
             "hidden": false
           }
         ]'::jsonb,
@@ -64,49 +65,53 @@ VALUES ('Person','Person Insertion Form',
             "field_id": 1,
             "table": "persons",
             "column_name": "id",
-            "type": 2
+            "type": 2,
+            "is_primary_key": true
           },
           {
             "id": 2,
             "field_id": 2,
             "table": "persons",
             "column_name": "name",
-            "type": 0
+            "type": 0,
+            "is_primary_key": false
           },
           {
             "id": 3,
             "field_id": 3,
             "table": "persons",
             "column_name": "surname",
-            "type": 0
+            "type": 0,
+            "is_primary_key": false
           },
           {
             "id": 4,
             "field_id": 4,
             "table": "persons",
             "column_name": "birth_date",
-            "type": 11
+            "type": 6,
+            "is_primary_key": false
           }
         ]'::jsonb,
         '[
           {
             "id": 1,
             "field_id": 2,
-            "validation_type": 7,
+            "validation_type": 0,
             "validation_values": [],
             "error_message": "O campo Nome é obrigatório"
           },
           {
             "id": 2,
             "field_id": 3,
-            "validation_type": 7,
+            "validation_type": 0,
             "validation_values": [],
             "error_message": "O campo Sobrenome é obrigatório"
           },
           {
             "id": 3,
             "field_id": 4,
-            "validation_type": 7,
+            "validation_type": 0,
             "validation_values": [],
             "error_message": "Data de Nascimento é obrigatória"
           },
@@ -118,3 +123,12 @@ VALUES ('Person','Person Insertion Form',
             "error_message": "É obrigatório que a pessoa seja maior de 18 anos"
           }
         ]'::jsonb);
+
+CREATE TABLE persons
+(
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    surname VARCHAR(255) NOT NULL,
+    birth_date DATE NOT NULL,
+    created_at TIMESTAMP(3) WITHOUT TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
