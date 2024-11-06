@@ -7,5 +7,9 @@ namespace DynamicFormValidator.Presentation.Models.Interpreter;
 public interface IFormDataQueryInterpreter
 {
    Task<bool> InsertFormData(FormDto formDto,Form form);
+   
+   Task<bool> UpdateFormData(FormDto formDto, Form form);
    Task<bool> DeleteFormData(string entityId, Form form);
+   
+   Task<object> SelectFormData(string entityId, Form form);
 }

@@ -1,6 +1,7 @@
 using System.Data;
 using DynamicFormValidator.Presentation.Models.DTOs;
 using DynamicFormValidator.Presentation.Models.Entities.Forms;
+using DynamicFormValidator.Presentation.Models.Enums;
 using DynamicFormValidator.Presentation.Models.Interpreter;
 using DynamicFormValidator.Presentation.Models.Validators;
 using DynamicFormValidator.Presentation.Repositories.Forms;
@@ -71,7 +72,25 @@ public class FormsService : IFormsService
         return form;
     }
 
-    public async Task<ValidationResult> ValidateForm(FormDto formDto)
+    public async Task<object> SelectForm(string entityId, int formId)
+    {
+        if(string.IsNullOrWhiteSpace(entityId))
+        {
+            throw new NullReferenceException("EntityId is null or empty");
+        }
+        
+        var form = await GetForm(formId);
+        if(form is null)
+        {
+            throw new DataException("Form not found");
+        }
+        
+        object result = await _queryInterpreter.SelectFormData(entityId, form);
+        return result;
+    }
+
+
+    public async Task<ValidationResult> ValidateForm(FormDto formDto, FormRequestOperation operation = FormRequestOperation.INSERT)
     {
         var form = await GetForm(formDto.Id);
         if (form is null)
@@ -79,7 +98,7 @@ public class FormsService : IFormsService
             throw new DataException("Form not found");
         }
 
-        FormValidator validator = new FormValidator(form);
+        FormValidator validator = new FormValidator(form,operation);
         ValidationResult result = await validator.ValidateAsync(formDto);
 
         return result;
@@ -116,7 +135,7 @@ public class FormsService : IFormsService
         
     }
 
-    public async Task SaveForm(FormDto formDto)
+    public async Task InsertForm(FormDto formDto)
     {
         var form = await GetForm(formDto.Id);
         var insertResult = await _queryInterpreter.InsertFormData(formDto, form);
@@ -124,6 +143,26 @@ public class FormsService : IFormsService
         {
             throw new DataException("Failed to save form data");
         }
+    }
+
+    public async Task UpdateForm(FormDto formDto)
+    {
+        if(formDto is null)
+        {
+            throw new NullReferenceException("FormDto is null");
+        }
         
+        var form = await GetForm(formDto.Id);
+        if(form is null)
+        {
+            throw new DataException("Form not found");
+        }
+        
+        var updateResult = await _queryInterpreter.UpdateFormData(formDto, form);
+        if(!updateResult)
+        {
+            throw new DataException("Failed to update form data");
+        }
+
     }
 }

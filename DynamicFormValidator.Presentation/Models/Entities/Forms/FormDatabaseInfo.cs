@@ -22,4 +22,10 @@ public class FormDatabaseInfo
     
     [JsonProperty("is_primary_key")]
     public bool IsPrimaryKey { get; set; }
+    
+    [JsonProperty("ignore_on_insert")]
+    public bool IgnoreOnInsert { get; set; }
+    
+    [JsonProperty("ignore_on_update")]
+    public bool IgnoreOnUpdate { get; set; }
 }

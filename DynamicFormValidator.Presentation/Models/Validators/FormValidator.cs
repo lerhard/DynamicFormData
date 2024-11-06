@@ -10,15 +10,24 @@ public class FormValidator : AbstractValidator<FormDto>
 {
     private readonly FormFieldsValidatorInfo _fieldsInfo;
 
-    public FormValidator(Form form, ValidationContext<FormDto> originalContext = null)
+    public FormValidator(Form form, FormRequestOperation operation, ValidationContext<FormDto> originalContext = null)
     {
         _fieldsInfo = new FormFieldsValidatorInfo(form);
 
         foreach (var key in _fieldsInfo.RequiredValidation.Keys)
         {
-            RuleFor(x => x.Fields.ContainsKey(key)).Equal(true)
-                .WithMessage(_fieldsInfo.RequiredValidation[key].ErrorMessage)
-                .WithName(_fieldsInfo.Name[key]);
+            var requiredValidation = _fieldsInfo.RequiredValidation[key];
+            switch (operation)
+            {
+                case FormRequestOperation.UPDATE when requiredValidation.IgnoreOnUpdate:
+                case FormRequestOperation.INSERT when requiredValidation.IgnoreOnInsert:
+                    continue;
+                default:
+                    RuleFor(x => x.Fields.ContainsKey(key)).Equal(true)
+                        .WithMessage(_fieldsInfo.RequiredValidation[key].ErrorMessage)
+                        .WithName(_fieldsInfo.Name[key]);
+                    break;
+            }
         }
 
 
@@ -27,7 +36,7 @@ public class FormValidator : AbstractValidator<FormDto>
             if (_fieldsInfo.Validation.TryGetValue(field.Key, out var validations))
             {
                 var validationContext = originalContext ?? context;
-                ApplyValidation(field, validations, validationContext);
+                ApplyValidation(field, validations, validationContext,operation);
             }
         });
 
@@ -35,17 +44,25 @@ public class FormValidator : AbstractValidator<FormDto>
         {
             if (_fieldsInfo.Subforms.TryGetValue(subform.Id, out var subFormInfo))
             {
-                RuleFor(subform => subform).SetValidator(new FormValidator(subFormInfo, originalContext ?? context));
+                RuleFor(subform => subform)
+                    .SetValidator(new FormValidator(subFormInfo, operation, originalContext ?? context));
             }
         });
     }
 
     private void ApplyValidation(KeyValuePair<int, string> field
         , List<FormValidationInfo> validations
-        , ValidationContext<FormDto> context)
+        , ValidationContext<FormDto> context,FormRequestOperation operation)
     {
         foreach (var validation in validations)
         {
+            switch (operation)
+            {
+                case FormRequestOperation.UPDATE when validation.IgnoreOnUpdate:
+                case FormRequestOperation.INSERT when validation.IgnoreOnInsert:
+                    continue;
+            }
+
             IComparable value = null;
             IComparable valueToCompare = null;
 
@@ -115,7 +132,7 @@ public class FormValidator : AbstractValidator<FormDto>
                     context.AddFailure(_fieldsInfo.Name[field.Key], validation.ErrorMessage);
                     break;
                 case ValidationType.AGE:
-                    
+
                     DateTime date = DateTime.Parse(field.Value);
                     DateTime currentDate = DateTime.Now;
                     int age = (currentDate - date).Days / 365;

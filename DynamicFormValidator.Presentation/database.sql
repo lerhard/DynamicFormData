@@ -66,7 +66,9 @@ VALUES ('Person','Person Insertion Form',
             "table": "persons",
             "column_name": "id",
             "type": 2,
-            "is_primary_key": true
+            "is_primary_key": true,
+            "ignore_on_insert":true,
+            "ignore_on_update":true
           },
           {
             "id": 2,
@@ -74,7 +76,9 @@ VALUES ('Person','Person Insertion Form',
             "table": "persons",
             "column_name": "name",
             "type": 0,
-            "is_primary_key": false
+            "is_primary_key": false,
+            "ignore_on_insert":false,
+            "ignore_on_update":true
           },
           {
             "id": 3,
@@ -82,7 +86,9 @@ VALUES ('Person','Person Insertion Form',
             "table": "persons",
             "column_name": "surname",
             "type": 0,
-            "is_primary_key": false
+            "is_primary_key": false,
+            "ignore_on_insert":false,
+            "ignore_on_update":true
           },
           {
             "id": 4,
@@ -90,7 +96,9 @@ VALUES ('Person','Person Insertion Form',
             "table": "persons",
             "column_name": "birth_date",
             "type": 6,
-            "is_primary_key": false
+            "is_primary_key": false,
+            "ignore_on_insert":false,
+            "ignore_on_update":false
           }
         ]'::jsonb,
         '[
@@ -99,28 +107,45 @@ VALUES ('Person','Person Insertion Form',
             "field_id": 2,
             "validation_type": 0,
             "validation_values": [],
-            "error_message": "O campo Nome é obrigatório"
+            "error_message": "O campo Nome é obrigatório",
+            "ignore_on_insert":false,
+            "ignore_on_update":true
           },
           {
             "id": 2,
             "field_id": 3,
             "validation_type": 0,
             "validation_values": [],
-            "error_message": "O campo Sobrenome é obrigatório"
+            "error_message": "O campo Sobrenome é obrigatório",
+            "ignore_on_insert":false,
+            "ignore_on_update":true
           },
           {
             "id": 3,
             "field_id": 4,
             "validation_type": 0,
             "validation_values": [],
-            "error_message": "Data de Nascimento é obrigatória"
+            "error_message": "Data de Nascimento é obrigatória",
+            "ignore_on_insert":false,
+            "ignore_on_update":true
           },
           {
             "id": 4,
             "field_id": 4,
             "validation_type": 8,
             "validation_values": [18],
-            "error_message": "É obrigatório que a pessoa seja maior de 18 anos"
+            "error_message": "É obrigatório que a pessoa seja maior de 18 anos",
+            "ignore_on_insert":false,
+            "ignore_on_update":false
+          },
+          {
+            "id": 5,
+            "field_id": 1,
+            "validation_type": 0,
+            "validation_values": [],
+            "error_message": "Informe o id da entidade",
+            "ignore_on_insert":true,
+            "ignore_on_update":false
           }
         ]'::jsonb);
 

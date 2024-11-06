@@ -9,6 +9,8 @@ public class FormFieldsDatabaseInfo
     public int PrimaryKeyColumnId { get; set; }
     public Dictionary<int,DataType> Types { get; init; }
     public Dictionary<int,string> Columns { get; init; }
+    public Dictionary<int,bool> IgnoreOnInsert { get; init; }
+    public Dictionary<int,bool> IgnoreOnUpdate { get; init; }
     public string TableName { get; init; }
     
     
@@ -25,5 +27,7 @@ public class FormFieldsDatabaseInfo
         var primaryKey = form.DatabaseInfo.First(f => f.IsPrimaryKey);
         PrimaryKeyName = primaryKey.ColumnName;
         PrimaryKeyColumnId = primaryKey.Id;
+        IgnoreOnInsert = form.DatabaseInfo.ToDictionary(f => f.Id, f => f.IgnoreOnInsert);
+        IgnoreOnUpdate = form.DatabaseInfo.ToDictionary(f => f.Id, f => f.IgnoreOnUpdate);
     }
 }

@@ -23,6 +23,11 @@ public class FormFieldsValidatorInfo
             .ValidationInfo.Where(v => v.ValidationType == (int)ValidationType.REQUIRED)
             .ToDictionary(x => x.FieldId, x => x);
         
+        IgnoreInsert = form.ValidationInfo.ToDictionary(x => x.Id, x => x.IgnoreOnInsert);
+        IgnoreUpdate = form.ValidationInfo.ToDictionary(x => x.Id, x => x.IgnoreOnUpdate);
+        
+        
+        
         if (form.SubForms != null)
         {
             Subforms = form.SubForms.ToDictionary(f => f.Id, f => f);
@@ -38,4 +43,6 @@ public class FormFieldsValidatorInfo
     public Dictionary<int, string> Name { get; init; }
     public Dictionary<int, DataType> Type { get; init; }
     public Dictionary<int, Form> Subforms { get; init; }
+    public Dictionary<int, bool> IgnoreInsert { get; init; }
+    public Dictionary<int, bool> IgnoreUpdate { get; init; }
 }

@@ -4,5 +4,4 @@ public enum FormRequestOperation
 {
     INSERT,
     UPDATE,
-    DELETE
 }
